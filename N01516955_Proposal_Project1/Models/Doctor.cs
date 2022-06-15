@@ -28,4 +28,9 @@ namespace N01516955_Proposal_Project1.Models
         // Experience is in years
         public int Experience { get; set; }
     }
+    public class DoctorViewModel { 
+        public DoctorDto DoctorDto { get; set; }
+       
+        
+    }
 }

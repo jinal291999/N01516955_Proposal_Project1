@@ -1,23 +1,57 @@
-﻿using System;
+﻿using N01516955_Proposal_Project1.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace N01516955_Proposal_Project1.Controllers
 {
     public class AppointmentController : Controller
     {
-        // GET: Appointment
-        public ActionResult Index()
+        private static readonly HttpClient client;
+        private JavaScriptSerializer jss = new JavaScriptSerializer();
+
+        static AppointmentController()
         {
-            return View();
+            client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:44306/api/");
+        }
+        // GET: Appointment
+        [HttpGet]
+        public ActionResult List()
+        {
+            //objective: communicate with our animal data api to retrieve a list of animals
+            //curl https://localhost:44324/api/Appointmentdata/listappointments
+
+
+            string url = "AppointmentData/ListAppointments";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            //Debug.WriteLine("The response code is ");
+            //Debug.WriteLine(response.StatusCode);
+
+            IEnumerable<AppointmentDto> Appointments = response.Content.ReadAsAsync<IEnumerable<AppointmentDto>>().Result;
+            //Debug.WriteLine("Number of animals received : ");
+            //Debug.WriteLine(animals.Count());
+
+
+            return View(Appointments);
         }
 
         // GET: Appointment/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+        
+
+            string url = "appointmentdata/findappointment/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            AppointmentDto Appointment = response.Content.ReadAsAsync<AppointmentDto>().Result;
+
+            return View(Appointment);
         }
 
         // GET: Appointment/Create

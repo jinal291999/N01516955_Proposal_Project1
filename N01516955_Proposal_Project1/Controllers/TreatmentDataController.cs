@@ -18,7 +18,7 @@ namespace N01516955_Proposal_Project1.Controllers
 
         // GET: api/TreatmentData/ListTreatments
         [HttpGet]
-        public IHttpActionResult ListTreatments()
+        public IHttpActionResult ListTreatment()
         {
             List<Treatment> Treatments = db.Treatments.ToList();
             List<TreatmentDto> TreatmentDtos = new List<TreatmentDto>();
@@ -100,8 +100,9 @@ namespace N01516955_Proposal_Project1.Controllers
             return CreatedAtRoute("DefaultApi", new { id = treatment.Id }, treatment);
         }
 
-        // DELETE: api/TreatmentData/5
+        // DELETE: api/TreatmentData/DeleteTreatment
         [ResponseType(typeof(Treatment))]
+        [HttpPost]
         public IHttpActionResult DeleteTreatment(int id)
         {
             Treatment treatment = db.Treatments.Find(id);

@@ -1,47 +1,89 @@
-﻿using System;
+﻿using N01516955_Proposal_Project1.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace N01516955_Proposal_Project1.Controllers
 {
     public class TreatmentController : Controller
     {
         // GET: Treatment
-        public ActionResult Index()
+        private static readonly HttpClient client;
+        private JavaScriptSerializer jss = new JavaScriptSerializer();
+
+        static TreatmentController()
         {
-            return View();
+            client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:44306/api/");
         }
 
         // GET: Treatment/Details/5
+        public ActionResult List()
+        {
+            //objective: communicate with our animal data api to retrieve a list of animals
+            //curl https://localhost:44324/api/Treatmentdata/listTreatment
+
+
+            string url = "TreatmentData/ListTreatment";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            //Debug.WriteLine("The response code is ");
+            //Debug.WriteLine(response.StatusCode);
+
+            IEnumerable<TreatmentDto> Appointment = response.Content.ReadAsAsync<IEnumerable<TreatmentDto>>().Result;
+            //Debug.WriteLine("Number of animals received : ");
+            //Debug.WriteLine(animals.Count());
+
+
+            return View(Appointment);
+        }
         public ActionResult Details(int id)
         {
-            return View();
-        }
 
+
+            string url = "Treatmentdata/findTreatment/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            TreatmentDto Treatment = response.Content.ReadAsAsync<TreatmentDto>().Result;
+
+            return View(Treatment);
+        }
         // GET: Treatment/Create
-        public ActionResult Create()
+        [HttpGet]
+        public ActionResult New()
         {
             return View();
         }
 
         // POST: Treatment/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Treatment treatment)
         {
-            try
-            {
-                // TODO: Add insert logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string url = "TreatmentData/addTreatment";
+
+
+            string jsonpayload = jss.Serialize(treatment);
+
+            HttpContent content = new StringContent(jsonpayload);
+            content.Headers.ContentType.MediaType = "application/json";
+
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
             }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+
+
         }
-
         // GET: Treatment/Edit/5
         public ActionResult Edit(int id)
         {

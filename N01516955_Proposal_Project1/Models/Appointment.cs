@@ -32,6 +32,6 @@ namespace N01516955_Proposal_Project1.Models
         public int DoctorId { get; set; }
         public int Id { get; set; }
 
-
+        
     }
 }

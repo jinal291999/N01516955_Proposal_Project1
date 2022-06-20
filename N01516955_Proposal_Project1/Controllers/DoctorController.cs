@@ -124,7 +124,7 @@ namespace N01516955_Proposal_Project1.Controllers
                 doc1.Speciality = doctor.DoctorDto.Speciality;
                 doc1.Experience = doctor.DoctorDto.Experience;
 
-                string url = "animaldata/updateanimal/" + id;
+                string url = "DoctorData/updateDoctor/" + id;
                 string jsonpayload = jss.Serialize(doc1);
                 HttpContent content = new StringContent(jsonpayload);
                 content.Headers.ContentType.MediaType = "application/json";

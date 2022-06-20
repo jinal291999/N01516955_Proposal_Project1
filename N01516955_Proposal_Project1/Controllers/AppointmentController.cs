@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using static N01516955_Proposal_Project1.Models.AppointmentDto;
 
 namespace N01516955_Proposal_Project1.Controllers
 {
@@ -41,6 +42,7 @@ namespace N01516955_Proposal_Project1.Controllers
             return View(Appointments);
         }
 
+
         // GET: Appointment/Details/5
         public ActionResult Details(int id)
         {
@@ -55,6 +57,7 @@ namespace N01516955_Proposal_Project1.Controllers
         }
 
         // GET: Appointment/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -62,62 +65,88 @@ namespace N01516955_Proposal_Project1.Controllers
 
         // POST: Appointment/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Appointment appointment)
         {
-            try
-            {
-                // TODO: Add insert logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string url = "Appointmentdata/addAppointment";
+
+
+            string jsonpayload = jss.Serialize(appointment);
+
+            HttpContent content = new StringContent(jsonpayload);
+            content.Headers.ContentType.MediaType = "application/json";
+
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
             }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+
+
         }
-
         // GET: Appointment/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            string url = "Appointmentdata/findAppointment/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            AppointmentDto selectedAppointment = response.Content.ReadAsAsync<AppointmentDto>().Result;
+            return View(selectedAppointment);
         }
 
-        // POST: Appointment/Edit/5
+        // POST: Keeper/Update/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Update(int id, Appointment appointment)
         {
-            try
-            {
-                // TODO: Add update logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string url = "Appointmentdata/updateAppointment/" + id;
+            string jsonpayload = jss.Serialize(appointment);
+            HttpContent content = new StringContent(jsonpayload);
+            content.Headers.ContentType.MediaType = "application/json";
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+           
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
+
+
 
         // GET: Appointment/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirm(int id)
         {
-            return View();
+            string url = "Appointmentdata/findAppointment/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            AppointmentDto selectedDoctor = response.Content.ReadAsAsync<AppointmentDto>().Result;
+            return View(selectedDoctor);
         }
 
         // POST: Appointment/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            string url = "Appointmentdata/AppointmentDoctor/" + id;
+            HttpContent content = new StringContent("");
+            content.Headers.ContentType.MediaType = "application/json";
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
+
     }
 }

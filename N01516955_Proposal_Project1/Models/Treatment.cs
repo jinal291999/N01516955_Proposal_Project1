@@ -28,9 +28,14 @@ namespace N01516955_Proposal_Project1.Models
         public int Duration { get; set; }
         //cost is in $
         public decimal Cost { get; set; }
+        public class TreatmentViewModel
+        {
+            public TreatmentDto TreatmentDto { get; set; }
 
-        
-        
+
+        }
+
+
     }
 
 }

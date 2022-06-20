@@ -1,8 +1,19 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-image:url(/Content/images/hospital.jpg);
+    background-size:1600px 1600px;
+    font-size: 15px;
+   
 }
 
+.jumbotron {
+    background-color:darkblue;
+    color:aliceblue;
+}
+.table {
+    background-color:lightblue;
+}
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -25,6 +36,6 @@ textarea {
 
 .navbar-inverse .navbar-toggle:hover,
 .navbar-inverse .navbar-toggle:focus {
-    background-color: #777;
+    background-color: rosybrown;
     border-color: #fff
 }

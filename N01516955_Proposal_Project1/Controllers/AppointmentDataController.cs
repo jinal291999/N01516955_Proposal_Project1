@@ -30,10 +30,7 @@ namespace N01516955_Proposal_Project1.Controllers
                 Gender = a.Gender,
                 PhoneNo = a.PhoneNo,
                 AppointmentDateTime = a.AppointmentDateTime,
-                DoctorId = a.DoctorId,
                 Id = a.Id                
-
-
 
             }));
             return Ok(AppointmentDtos);

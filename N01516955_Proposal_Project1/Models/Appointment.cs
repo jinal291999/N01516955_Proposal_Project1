@@ -24,14 +24,14 @@ namespace N01516955_Proposal_Project1.Models
     }
     public class AppointmentDto
     {
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }
         public int PhoneNo { get; set; }
         public DateTime AppointmentDateTime { get; set; }
-        public int DoctorId { get; set; }
-        public int Id { get; set; }
+       
 
-        
+       
     }
 }

@@ -1,11 +1,13 @@
 ﻿using N01516955_Proposal_Project1.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using static N01516955_Proposal_Project1.Models.TreatmentDto;
 
 namespace N01516955_Proposal_Project1.Controllers
 {
@@ -54,7 +56,7 @@ namespace N01516955_Proposal_Project1.Controllers
         }
         // GET: Treatment/Create
         [HttpGet]
-        public ActionResult New()
+        public ActionResult Create()
         {
             return View();
         }
@@ -64,7 +66,7 @@ namespace N01516955_Proposal_Project1.Controllers
         public ActionResult Create(Treatment treatment)
         {
 
-            string url = "TreatmentData/addTreatment";
+            string url = "TreatmentData/addtreatment";
 
 
             string jsonpayload = jss.Serialize(treatment);
@@ -87,18 +89,45 @@ namespace N01516955_Proposal_Project1.Controllers
         // GET: Treatment/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            TreatmentViewModel treatmentviewmodel = new TreatmentViewModel();
+
+            //the existing Doctor information
+            string url = "Doctordata/findDoctor/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            TreatmentDto SelectedDoctor = response.Content.ReadAsAsync<TreatmentDto>().Result;
+            treatmentviewmodel.TreatmentDto = SelectedDoctor;
+
+            return View(treatmentviewmodel);
         }
 
         // POST: Treatment/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+
+        public ActionResult Update(int id, TreatmentViewModel treatment)
         {
             try
             {
-                // TODO: Add update logic here
+                Treatment doc1 = new Treatment();
+                doc1.Id = treatment.TreatmentDto.Id;
+                doc1.Name = treatment.TreatmentDto.Name;
+                doc1.Duration = treatment.TreatmentDto.Duration;
+                doc1.Cost = treatment.TreatmentDto.Cost;
+               
 
-                return RedirectToAction("Index");
+                string url = "TreatmemntData/updateTreatment/" + id;
+                string jsonpayload = jss.Serialize(doc1);
+                HttpContent content = new StringContent(jsonpayload);
+                content.Headers.ContentType.MediaType = "application/json";
+                HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("Error");
+                }
             }
             catch
             {
@@ -107,24 +136,30 @@ namespace N01516955_Proposal_Project1.Controllers
         }
 
         // GET: Treatment/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirm(int id)
         {
-            return View();
+            string url = "Treatmentdata/findTreatment/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            TreatmentDto selectedTreatment = response.Content.ReadAsAsync<TreatmentDto>().Result;
+            return View(selectedTreatment);
         }
 
-        // POST: Treatment/Delete/5
+        // POST: Doctor/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            string url = "Treatmentdata/deleteTreatment/" + id;
+            HttpContent content = new StringContent("");
+            content.Headers.ContentType.MediaType = "application/json";
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
     }
